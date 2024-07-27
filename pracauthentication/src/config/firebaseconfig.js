@@ -1,8 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
-
-
+import { getFirestore, addDoc, collection } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD0b-DyZOfDCSzOg2brbJNbgKQX9w8CRxk",
@@ -19,25 +17,24 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+async function Register(userInfo) {
+  const { email, password, age, fullname } = userInfo;
+  console.log('Registering user with info:', userInfo);
 
-async function Register  (userInfo) {
-  
-try{
-  const prc = getAuth(app)
-  const {email , password , fullname , age} = userInfo
-  await createUserWithEmailAndPassword(prc, email, password);
-  return addDoc(collection(db , "users"), {email , fullname , age});}
-  
-catch(e)
-  {e.message}
-};
+  if (!email || !password || !age || !fullname) {
+    throw new Error('user information');
+  }
 
+  await createUserWithEmailAndPassword(auth, email, password);
+  return addDoc(collection(db, "users"), { email, fullname, age });
+}
 
-function Login (email , password) {
-  return signInWithEmailAndPassword(auth, email, password)
+function Login(email, password) {
+  return signInWithEmailAndPassword(auth, email, password);
 }
 
 export {
-  Register ,
+  Register,
   Login
 }
+
